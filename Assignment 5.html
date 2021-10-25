@@ -1,0 +1,127 @@
+<!DOCTYPE html> 
+<html> 
+    
+<head> 
+    <title>Homework 5</title> 
+    <meta charset="utf-8">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> 
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js
+"></script>	
+	<script>
+		// Create a function to reverse any word that you type in. 
+		// This can be typed into either an input box or an alert box, 
+		// and then print the result in a box or on the webpage.
+		function ReverseWord() {
+			var word = prompt("please enter a word to reverse");
+			alert(word.split("").reverse().join(""));
+		}
+		
+		//Create a function that takes an input number, 
+		//and prints a table with the first 20 multiples 
+		//of the number, in order 5x4
+		function makeMultiples(pNum) {
+			$('#e2').empty();
+			var mult = 1;
+			var div = $('#e2');
+			var table = $('<table></table>').addClass('foo');
+
+			for(var r = 0; r < 5; r++){
+				var row = $('<tr></tr>').addClass('bar')
+				for(var c = 0; c < 4; c++) {
+					var cell = $('<td></td>').addClass('bar').text(pNum * mult);
+					row.append(cell);
+					mult += 1;
+				}	
+				table.append(row);
+			}
+			div.append(table);
+		}
+		
+		//Write a function to load the presidents.csv data and display the data
+		//as an html table (you may use a cdv parser from any available library, 
+		//though I encourage you to try the d3 one).
+		function loadData() {
+			var data_site = "https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module5/data/presidents.csv";
+			$.ajax({
+				type: "GET",  
+				url: data_site,
+				dataType: "text",       
+				success: function(response)  {
+					data = $.csv.toArrays(response);
+					console.log(data[1][1]);
+					MakeTable(data);
+				}   
+			});
+		}
+		
+		function MakeTable(data) {
+			$('#e3').empty();
+			var div = $('#e3');
+			var table = $('<table></table>').addClass('foo');
+			var head = $('<thead></thead>');
+			var body = $('<tbody></tbody>');
+			
+			$.each(data, function( index, row ) {
+			  //bind header
+			  if(index == 0) {
+				var row_header = $('<tr></tr>');
+				$.each(row, function( index, colData ) {
+					var cell = $('<th></th>').text(colData);
+					row_header.append(cell);
+				});
+				head.append(row);
+			  } else {
+				var row_body = $('<tr></tr>');
+				$.each(row, function( index, colData ) {
+					var cell = $('<td></td>').text(colData);
+					row_body.append(cell);
+				});
+				body.append(row_body);
+			  }
+			});
+			table.append(head);
+			table.append(body);
+			div.append(table);
+		}
+		
+		
+		//Write a function that will return that president’s height & weight
+		//when you type it in. This can be typed into either an input box or
+		//an alert box, and then print the result in a box or on the webpage.
+		function GetInfo(pName) {
+			var data_site = "https://raw.githubusercontent.com/charleyferrari/CUNY_DATA_608/master/module5/data/presidents.csv";
+			$.ajax({
+				type: "GET",  
+				url: data_site,
+				dataType: "text",       
+				success: function(response)  {
+					data = $.csv.toArrays(response);
+					console.log(typeof data);
+					var found = false;
+					$.each(data, function( index, row ) {
+						if(row[0] == pName) {
+							console.log("Height: " + row[1]);
+							console.log("Weight: " + row[2]);
+							found = true;
+							return;
+						}
+					});
+					if(found == false) {
+						alert("no president found.");
+					}   
+				}
+			});
+		}
+	</script>
+</head> 
+    
+<body> 
+   <button type="button" onclick="ReverseWord()">Reverse Word</button>
+   <button type="button" onclick="makeMultiples(parseInt(prompt('Enter a number')))">Get Multiples</button>
+   <button type="button" onclick="loadData()">Get Data</button>
+   <button type="button" onclick="GetInfo(prompt('Enter a presidents name'))">Get Info</button>
+   <div id="e2"></div>
+   <div id="e3"></div>
+</body> 
+   
+</html> 
